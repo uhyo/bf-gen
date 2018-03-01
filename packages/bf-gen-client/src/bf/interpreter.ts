@@ -1,4 +1,5 @@
 import { Operator, Operators } from '@uhyo/bf-gen-defs';
+import { bind } from 'bind-decorator';
 import { Opcode, opcodes } from './ops';
 import { Tokenizer } from './tokenizer';
 import { Executor } from './executor';
@@ -26,8 +27,12 @@ export class BFInterpreter {
   /**
    * Source of input.
    */
-  protected inputSource: InputSource;
-  constructor(ops: Operators, inputSource: InputSource) {
+  protected inputSource: () => Promise<string>;
+  /**
+   * Buffered input.
+   */
+  protected inputBuffer: { buf: number[]; index: number } | null = null;
+  constructor(ops: Operators, inputSource: () => Promise<string>) {
     this.tokenizer = new Tokenizer(ops);
     this.inputSource = inputSource;
   }
@@ -105,8 +110,40 @@ export class BFInterpreter {
    * Execute given BF program.
    */
   protected execute(program: ProgramBlock): AsyncIterableIterator<number> {
-    const executor = new Executor(program, this.inputSource);
+    const executor = new Executor(program, this.getInput);
     return executor.execute();
+  }
+  /**
+   * Generate incoming user input.
+   */
+  @bind
+  protected async getInput(): Promise<number> {
+    const i = this.inputBuffer;
+    if (i == null || i.buf.length <= i.index) {
+      // input buffer is exhaused.
+      while (true) {
+        const input = await this.inputSource();
+        if (input.length !== 0) {
+          this.inputBuffer = {
+            // TODO encode into UTF-8?
+            buf: Array.from(input, ch => ch.codePointAt(0)!),
+            index: 0,
+          };
+          break;
+        }
+      }
+    }
+    const { inputBuffer } = this;
+    if (inputBuffer != null) {
+      const { buf, index } = inputBuffer;
+      if (index < buf.length) {
+        // Can provide a next input.
+        const ch = buf[index];
+        inputBuffer.index++;
+        return ch;
+      }
+    }
+    throw new Error('Invariant failed');
   }
 }
 

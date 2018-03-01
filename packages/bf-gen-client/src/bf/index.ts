@@ -1,12 +1,12 @@
 import { LanguageDefinition } from '@uhyo/bf-gen-defs';
-import { BFInterpreter, RunResult, InputSource } from './interpreter';
+import { BFInterpreter, RunResult } from './interpreter';
 
 /**
  * Run a given language with given source code.
  */
 export async function* run(
   language: LanguageDefinition,
-  source: InputSource,
+  source: () => Promise<string>,
   code: string,
 ): AsyncIterableIterator<number> {
   const ipt = new BFInterpreter(language.ops, source);

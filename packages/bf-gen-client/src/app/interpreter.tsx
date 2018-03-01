@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { bind } from 'bind-decorator';
 
 import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { withProps } from '../util/styled';
 import { run } from '../bf';
 
 export interface IPropInterpreter {
@@ -13,6 +14,10 @@ export interface IStateInterpreter {
    * Whether interpreter is running.
    */
   running: boolean;
+  /**
+   * Whether waiting on input.
+   */
+  waiting: boolean;
   /**
    * Whether the output is erroneous.
    */
@@ -33,6 +38,7 @@ export class Interpreter extends React.PureComponent<
     super(props);
     this.state = {
       running: false,
+      waiting: false,
       error: false,
       output: '',
     };
@@ -41,18 +47,41 @@ export class Interpreter extends React.PureComponent<
    * Ref to code area.
    */
   protected textarea: HTMLTextAreaElement | null = null;
+  /**
+   * Ref to input area.
+   */
+  protected input: HTMLInputElement | null = null;
+  /**
+   * Function to call when user input comes.
+   */
+  protected inputCallback: ((str: string) => void) | null = null;
   public render() {
-    const { running, error, output } = this.state;
+    const { running, waiting, error, output } = this.state;
     return (
       <div>
         <CodeArea innerRef={e => (this.textarea = e)} />
         <RunButton type="button" onClick={this.handleClick} disabled={running}>
           実行
         </RunButton>
-        <div>実行結果</div>
-        <ResultArea>{output}</ResultArea>
+        <div>{running ? '実行中' : '実行結果'}</div>
+        <ResultArea error={error} onClick={this.handleResultClick}>
+          {output}
+          {waiting ? (
+            <ConsoleInput
+              innerRef={e => (this.input = e)}
+              onChange={this.handleInput}
+              onKeyDown={this.handleKeyDown}
+            />
+          ) : null}
+        </ResultArea>
       </div>
     );
+  }
+  public componentDidUpdate(_: IPropInterpreter, prevState: IStateInterpreter) {
+    // if input is opened...
+    if (!prevState.waiting && this.state.waiting && this.input != null) {
+      this.input.focus();
+    }
   }
   @bind
   protected async handleClick(): Promise<void> {
@@ -62,26 +91,85 @@ export class Interpreter extends React.PureComponent<
     }
     // initialize the state.
     this.setState({
+      running: true,
       error: false,
       output: '',
     });
 
     const code = textarea.value;
 
-    for await (const char of run(this.props.language, this.inputSource, code)) {
-      const str = String.fromCharCode(char);
+    try {
+      for await (const char of run(
+        this.props.language,
+        this.inputSource,
+        code,
+      )) {
+        const str = String.fromCharCode(char);
+        this.setState({
+          output: this.state.output + str,
+        });
+      }
       this.setState({
-        output: this.state.output + str,
+        running: false,
       });
+    } catch (e) {
+      this.setState({
+        running: false,
+        error: true,
+        output: String(e),
+      });
+    }
+  }
+  @bind
+  protected handleInput(e: React.SyntheticEvent<HTMLInputElement>): void {
+    // 入力されたらそれを送る
+    const input = e.currentTarget;
+    if (input.value !== '' && this.inputCallback != null) {
+      const value = input.value;
+      this.setState({
+        waiting: false,
+        output: this.state.output + value,
+      });
+      this.inputCallback(value);
+    }
+  }
+  /**
+   * Handle some special key input.
+   */
+  @bind
+  protected handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>): void {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (this.inputCallback != null) {
+        this.inputCallback('\n');
+      }
+    } else if (e.key === 'd' && e.ctrlKey) {
+      e.preventDefault();
+      if (this.inputCallback != null) {
+        this.inputCallback('\0');
+      }
+    }
+  }
+  /**
+   * Handler of click event on result area.
+   */
+  @bind
+  protected handleResultClick(): void {
+    if (this.input != null) {
+      this.input.focus();
     }
   }
   /**
    * Input source provided by the component.
    */
   @bind
-  protected inputSource(): Promise<number> {
-    // TODO
-    return Promise.resolve(0);
+  protected inputSource(): Promise<string> {
+    return new Promise(resolve => {
+      this.inputCallback = resolve;
+      this.setState({
+        waiting: true,
+      });
+    });
   }
 }
 
@@ -91,7 +179,7 @@ export class Interpreter extends React.PureComponent<
 const CodeArea = styled.textarea`
   display: inline-block;
   width: 100%;
-  height: 10em;
+  height: 14em;
 `;
 
 /**
@@ -104,12 +192,29 @@ const RunButton = styled.button`
   font-size: 1.2em;
 `;
 
+interface IPropResultArea {
+  error: boolean;
+}
 /**
  * Result area.
  */
-const ResultArea = styled.pre`
-  background-color: #f2f2f2;
-  border: 4px dashed #888888;
+const ResultArea = withProps<IPropResultArea>()(styled.pre)`
+  background-color: ${props => (props.error ? '#ffdddd' : '#f2f2f2')};
+  border: 4px dashed ${props => (props.error ? '#ffaaaa' : '#888888')};
+  color: ${props => (props.error ? '#ff0000' : '#000000')};
   margin: 2px 0;
   padding: 8px;
+  font-size: 1rem;
+`;
+
+/**
+ * Input for console.
+ */
+const ConsoleInput = styled.input`
+  display: inline-block;
+  width: 1.5em;
+
+  border: none;
+  background: none;
+  outline: none;
 `;
