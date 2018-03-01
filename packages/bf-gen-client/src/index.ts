@@ -13,3 +13,17 @@ export function init(obj: LanguageDefinition): void {
 
   initApp(apparea, obj);
 }
+
+/**
+ * Initialize the creation page.
+ */
+export async function create(): Promise<void> {
+  const apparea = document.getElementById('app');
+  if (apparea == null) {
+    return;
+  }
+
+  const { initApp } = await import('./create');
+
+  initApp(apparea);
+}

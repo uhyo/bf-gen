@@ -8,6 +8,7 @@ module.exports = {
   output: {
     library: 'BF',
     path: path.join(__dirname, 'dist/'),
+    publicPath: '/static/',
     crossOriginLoading: 'anonymous',
     filename: 'bundle.js',
     chunkFilename: '[id].[chunkhash].bundle.js',

@@ -1,6 +1,14 @@
 # HTTP config
 http:
   port: 8080
+  origin: "http://localhost:8080"
+  # cookie secret
+  secret: "top secret"
+# Twitter authentication
+twitter:
+  consumerKey: "*"
+  consumerSecret: "*"
+
 
 # MongoDB config
 db:
