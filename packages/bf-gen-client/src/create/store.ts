@@ -1,5 +1,5 @@
 import { action, observable, computed } from 'mobx';
-import { Operator } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
 import { operators } from '../bf/ops';
 
 /**
@@ -68,6 +68,18 @@ export class Store {
     } else {
       return this.description_inner;
     }
+  }
+  /**
+   * Language.
+   */
+  @computed
+  public get language(): LanguageDefinition {
+    return {
+      name: this.long_name,
+      name_short: this.short_name,
+      description: this.description,
+      ops: this.ops,
+    };
   }
   /**
    * Update action.

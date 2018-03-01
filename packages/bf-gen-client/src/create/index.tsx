@@ -4,6 +4,8 @@ import { observer } from 'mobx-react';
 import { bind } from 'bind-decorator';
 import styled from 'styled-components';
 
+import { App as Preview } from '../app';
+
 import { operators, operatorDesc } from '../bf/ops';
 
 import { Store } from './store';
@@ -17,75 +19,101 @@ export function initApp(target: HTMLElement): void {
 export interface IPropApp {
   store: Store;
 }
+export interface IStateApp {
+  preview: boolean;
+}
 
 @observer
-export class App extends React.Component<IPropApp, {}> {
+export class App extends React.Component<IPropApp, IStateApp> {
+  constructor(props: IPropApp) {
+    super(props);
+    this.state = { preview: false };
+  }
   public render() {
-    const { short_name, long_name, description, ops } = this.props.store;
+    const {
+      short_name,
+      long_name,
+      description,
+      ops,
+      language,
+    } = this.props.store;
+    const { preview } = this.state;
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Area>
-          <p>プログラミング言語の名前を入力してください。</p>
-          <p>
-            <input
-              autoComplete="off"
-              required
-              value={short_name}
-              onChange={this.handleShortInput}
-            />
-          </p>
-        </Area>
-        <Area>
-          <p>ページのタイトルを入力してください。</p>
-          <p>
-            <input
-              autoComplete="off"
-              required
-              value={long_name}
-              onChange={this.handleLongInput}
-            />
-          </p>
-        </Area>
-        <Area>
-          <p>プログラミング言語の説明を入力してください。</p>
-          <p>
-            <textarea
-              autoComplete="off"
-              required
-              rows={4}
-              value={description}
-              onChange={this.handleDescInput}
-            />
-          </p>
-        </Area>
-        <Area>
-          <p>8つの命令を入力してください。</p>
-          <OpTable>
-            <tbody>
-              {operators.map(op => (
-                <tr key={op}>
-                  <td>
-                    <code>{op}</code>
-                  </td>
-                  <td>
-                    <input
-                      data-op={op}
-                      required
-                      value={ops[op]}
-                      onChange={this.handleOpInput}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </OpTable>
-        </Area>
-        <Area>
-          <p>
-            <SubmitButton type="submit">プレビュー</SubmitButton>
-          </p>
-        </Area>
-      </Form>
+      <>
+        <Form onSubmit={this.handleSubmit}>
+          <Area>
+            <p>プログラミング言語の名前を入力してください。</p>
+            <p>
+              <input
+                autoComplete="off"
+                required
+                value={short_name}
+                onChange={this.handleShortInput}
+              />
+            </p>
+          </Area>
+          <Area>
+            <p>ページのタイトルを入力してください。</p>
+            <p>
+              <input
+                autoComplete="off"
+                required
+                value={long_name}
+                onChange={this.handleLongInput}
+              />
+            </p>
+          </Area>
+          <Area>
+            <p>プログラミング言語の説明を入力してください。</p>
+            <p>
+              <textarea
+                autoComplete="off"
+                required
+                rows={4}
+                value={description}
+                onChange={this.handleDescInput}
+              />
+            </p>
+          </Area>
+          <Area>
+            <p>8つの命令を入力してください。</p>
+            <OpTable>
+              <tbody>
+                {operators.map(op => (
+                  <tr key={op}>
+                    <td>
+                      <code>{op}</code>
+                    </td>
+                    <td>
+                      <input
+                        data-op={op}
+                        required
+                        value={ops[op]}
+                        onChange={this.handleOpInput}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </OpTable>
+          </Area>
+          <Area>
+            <p>
+              <SubmitButton type="submit">プレビュー</SubmitButton>
+            </p>
+          </Area>
+        </Form>
+        {preview ? (
+          <div>
+            <p>
+              <b>プレビュー</b>:
+            </p>
+            <h1>{long_name}</h1>
+            <p>{description}</p>
+            <Preview language={language} />
+          </div>
+        ) : null}
+      </>
     );
   }
   @bind
@@ -121,6 +149,9 @@ export class App extends React.Component<IPropApp, {}> {
   @bind
   protected handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
+    this.setState({
+      preview: true,
+    });
   }
 }
 

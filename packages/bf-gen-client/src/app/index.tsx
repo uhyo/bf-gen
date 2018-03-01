@@ -28,9 +28,9 @@ export class App extends React.PureComponent<IPropApp, {}> {
     return (
       <div>
         <section>
-          <h2>{name_short}の説明</h2>
+          <h2>{name_short}の仕様</h2>
           <p>
-            <b>{name_short}</b>は以下の8つの命令を持つBrainf&#x2588;ck系プログラミング言語です。処理系はメモリ（バイト列）とメモリ上の位置を指すポインタを1つ持ちます。メモリは最初全て0で初期化されており、ポインタも0で初期化されています。
+            <b>{name_short}</b>は以下の8つの命令を持つBrainf*ck系プログラミング言語です。処理系はメモリ（バイト列）とメモリ上の位置を指すポインタを1つ持ちます。メモリは最初全て0で初期化されており、ポインタも0で初期化されています。
           </p>
           <dl>
             {operators.map(op => {
