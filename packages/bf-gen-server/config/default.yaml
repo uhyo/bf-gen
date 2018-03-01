@@ -1,0 +1,10 @@
+# HTTP config
+http:
+    port: 8080
+# MongoDB config
+db:
+    # name of database
+    db: "bf-gen"
+    user: "test"
+    password: "test"
+
