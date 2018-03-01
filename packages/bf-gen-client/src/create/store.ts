@@ -21,7 +21,8 @@ export class Store {
   /**
    * Descriptions of language.
    */
-  @observable public description: string = '';
+  @observable protected description_inner: string = '';
+  @observable protected description_auto: boolean = true;
   /**
    * Def. of operators.
    */
@@ -52,6 +53,23 @@ export class Store {
     }
   }
   /**
+   * Computed description.
+   */
+  @computed
+  public get description() {
+    if (this.description_auto) {
+      if (!this.short_name) {
+        return '';
+      } else {
+        return `プログラミング言語「${
+          this.short_name
+        }」は僕が考えた最強の言語です。`;
+      }
+    } else {
+      return this.description_inner;
+    }
+  }
+  /**
    * Update action.
    */
   @action
@@ -64,7 +82,8 @@ export class Store {
       this.long_name_auto = false;
     }
     if (query.description != null) {
-      this.description = query.description;
+      this.description_inner = query.description;
+      this.description_auto = false;
     }
     if (query.ops != null) {
       for (const op of operators) {
