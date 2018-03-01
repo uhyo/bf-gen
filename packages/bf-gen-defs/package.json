@@ -1,0 +1,19 @@
+{
+  "name": "@uhyo/bf-gen-defs",
+  "version": "1.0.0",
+  "description": "Definitions",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "uhyo",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  }
+}

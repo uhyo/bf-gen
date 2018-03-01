@@ -20,6 +20,9 @@ export interface LanguageDefinition {
   ops: Operators;
 }
 
+/**
+ * Definition of each operators.
+ */
 export interface Operators {
   '+': string;
   '-': string;
@@ -30,3 +33,8 @@ export interface Operators {
   '[': string;
   ']': string;
 }
+
+/**
+ * Type of operators.
+ */
+export type Operator = keyof Operators;

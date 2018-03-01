@@ -2,7 +2,7 @@ import * as path from 'path';
 import express from 'express';
 import config from 'config';
 
-import { LanguageDefinition } from './defs';
+import { LanguageDefinition } from '@uhyo/bf-gen-defs';
 
 /**
  * Start the web server.
