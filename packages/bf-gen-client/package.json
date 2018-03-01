@@ -4,14 +4,30 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "run-s clean build:tsc build:webpack",
     "build:tsc": "tsc",
+    "build:webpack": "webpack-cli",
+    "watch": "run-p watch:tsc watch:webpack",
     "watch:tsc": "tsc --watch",
+    "watch:webpack": "webpack-cli --watch",
+    "clean": "rimraf dist-es6 dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "uhyo",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^2.7.2"
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
+    "source-map-loader": "^0.2.3",
+    "typescript": "^2.7.2",
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9"
+  },
+  "dependencies": {
+    "@types/react": "^16.0.39",
+    "@types/react-dom": "^16.0.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   }
 }
