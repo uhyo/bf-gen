@@ -87,6 +87,7 @@ export class App extends React.Component<IPropApp, IStateApp> {
                 rows={4}
                 value={description}
                 maxLength={limits.description}
+                placeholder="Markdownが使用可能です"
                 onChange={this.handleDescInput}
               />
             </p>

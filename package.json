@@ -9,7 +9,7 @@
     "prettier": "^1.11.1"
   },
   "lint-staged": {
-    "*.{js,json,ts,tsx}": [
+    "*.{css,js,json,ts,tsx}": [
       "prettier --write",
       "git add"
     ]

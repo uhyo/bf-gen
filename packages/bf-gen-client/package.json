@@ -17,7 +17,11 @@
   "author": "uhyo",
   "license": "MIT",
   "devDependencies": {
+    "css-loader": "^0.28.10",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "npm-run-all": "^4.1.2",
+    "postcss-loader": "^2.1.1",
+    "postcss-nested": "^3.0.0",
     "rimraf": "^2.6.2",
     "source-map-loader": "^0.2.3",
     "typescript": "^2.7.2",

@@ -72,6 +72,9 @@ class AppInner extends React.PureComponent<IPropApp, {}> {
           </section>
           <section>
             <h2>{name_short} Webインタプリタ</h2>
+            <p>
+              <b>{name_short}</b>をブラウザ上で実行することができます。
+            </p>
             <Interpreter language={this.props.language} />
           </section>
         </section>
@@ -114,6 +117,7 @@ class OwnerInner extends React.PureComponent<IPropOwner, {}> {
 }
 const Owner = styled(OwnerInner)`
   float: right;
+  margin: 0.8em;
   padding: 3px;
 
   background-color: #f4f4f4;

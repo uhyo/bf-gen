@@ -13,3 +13,21 @@ export async function loadLanguage(id: string): Promise<LanguageDoc | null> {
 
   return doc;
 }
+
+/**
+ * Get language by hash.
+ */
+export async function getByHash(hash: string): Promise<string | null> {
+  const coll = await languageCollection();
+
+  const doc = await coll.findOne(
+    {
+      hash,
+    },
+    {
+      projection: { _id: 1 },
+    },
+  );
+
+  return doc && doc._id.toHexString();
+}

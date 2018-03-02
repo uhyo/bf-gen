@@ -1,0 +1,91 @@
+/**
+ * CSS for application
+ */
+html {
+  height: 100%;
+}
+body {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0 8px 0 8px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+h1 {
+  font-size: 2em;
+}
+h2 {
+  font-size: 1.5em;
+}
+p {
+  margin: 0.8em 0;
+  line-height: 1.08;
+}
+@media (max-width: 400px) {
+  h1 {
+    font-size: 1.6em;
+  }
+  h2 {
+    font-size: 1.25em;
+  }
+}
+ul {
+  margin: 0.2em 0;
+  li {
+    margin: 0.1em 0;
+  }
+}
+main#main {
+  flex: auto 1 0;
+}
+footer#footer {
+  flex: auto 0 0;
+  margin: 20px -8px 0 -8px;
+  padding: 18px;
+
+  & > div {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  background-color: #000070;
+  color: #ffffff;
+  font-size: 1em;
+
+  h1 {
+    font-size: 1em;
+  }
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  hr {
+    border: 1px dashed #ffffff;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  ul li {
+    display: inline-block;
+    margin-right: 2.5em;
+    list-style-type: none;
+  }
+}
+
+section.warning {
+  border: 3px dashed #ffdd88;
+  background-color: #fffae0;
+  padding: 5px;
+
+  h3 {
+    margin: 0.2em 0;
+    font-size: 1.15em;
+    color: #553300;
+  }
+}

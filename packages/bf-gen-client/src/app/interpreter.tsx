@@ -21,6 +21,10 @@ export interface IStateInterpreter {
    */
   waiting: boolean;
   /**
+   * Whether result is open.
+   */
+  result: boolean;
+  /**
    * Whether the output is erroneous.
    */
   error: boolean;
@@ -41,6 +45,7 @@ export class Interpreter extends React.PureComponent<
     this.state = {
       running: false,
       waiting: false,
+      result: false,
       error: false,
       output: '',
     };
@@ -58,7 +63,7 @@ export class Interpreter extends React.PureComponent<
    */
   protected inputCallback: ((str: string) => void) | null = null;
   public render() {
-    const { running, waiting, error, output } = this.state;
+    const { running, waiting, error, output, result } = this.state;
     return (
       <div>
         <p>
@@ -76,17 +81,21 @@ export class Interpreter extends React.PureComponent<
         <RunButton type="button" onClick={this.handleClick} disabled={running}>
           実行
         </RunButton>
-        <div>{running ? '実行中' : '実行結果'}</div>
-        <ResultArea error={error} onClick={this.handleResultClick}>
-          {output}
-          {waiting ? (
-            <ConsoleInput
-              innerRef={e => (this.input = e)}
-              onChange={this.handleInput}
-              onKeyDown={this.handleKeyDown}
-            />
-          ) : null}
-        </ResultArea>
+        {result ? (
+          <ResultWrapper>
+            <div>{running ? '実行中' : '実行結果'}</div>
+            <ResultArea error={error} onClick={this.handleResultClick}>
+              {output}
+              {waiting ? (
+                <ConsoleInput
+                  innerRef={e => (this.input = e)}
+                  onChange={this.handleInput}
+                  onKeyDown={this.handleKeyDown}
+                />
+              ) : null}
+            </ResultArea>
+          </ResultWrapper>
+        ) : null}
       </div>
     );
   }
@@ -130,6 +139,7 @@ export class Interpreter extends React.PureComponent<
     // initialize the state.
     this.setState({
       running: true,
+      result: true,
       error: false,
       output: '',
     });
@@ -228,6 +238,13 @@ const RunButton = styled.button`
   width: 100%;
 
   font-size: 1.2em;
+`;
+
+/**
+ * Wrapper of result area.
+ */
+const ResultWrapper = styled.div`
+  margin: 8px;
 `;
 
 interface IPropResultArea {

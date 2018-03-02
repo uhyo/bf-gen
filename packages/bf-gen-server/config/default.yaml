@@ -4,6 +4,13 @@ http:
   origin: "http://localhost:8080"
   # cookie secret
   secret: "top secret"
+# application config.
+app:
+  name: "Brainf*ck系言語を作るやつ"
+  description: "Brainf*ck系言語を簡単に作成・公開できるサービスです。"
+  origin: "http://localhost:8080"
+  author: "@uhyo_"
+
 
 # length limit of user inputs.
 limit:

@@ -11,7 +11,7 @@ import { LanguageDefinition, Owner } from '@uhyo/bf-gen-defs';
 
 import { issueJwt } from './logic';
 import { publish } from './publish';
-import { loadLanguage } from './get';
+import { loadLanguage, getByHash } from './get';
 
 // Initialize passport.
 passport.use(
@@ -19,7 +19,7 @@ passport.use(
     {
       consumerKey: config.get('twitter.consumerKey'),
       consumerSecret: config.get('twitter.consumerSecret'),
-      callbackURL: config.get('http.origin') + '/auth/twitter/callback',
+      callbackURL: config.get('app.origin') + '/auth/twitter/callback',
     },
     (token, tokenSecret, profile, done) => {
       done(null, {
@@ -72,6 +72,9 @@ export function start(): void {
   // Instantiate an express app.
   const app = express();
 
+  // local data for template engines.
+  app.locals.app = config.get('app');
+
   // app config.
   app.set('view engine', 'pug');
   // static moddleware
@@ -98,14 +101,11 @@ export function start(): void {
   app.use(passport.session());
 
   app.get('/', (req, res) => {
-    res.render('index');
-  });
-  app.get('/new', (req, res) => {
     res.render('new');
   });
   app.get('/new/step2', (req, res, next) => {
     if (req.user == null) {
-      res.redirect(303, '/new');
+      res.redirect(303, '/');
       return;
     }
     issueJwt(req.user as Owner)
@@ -150,6 +150,20 @@ export function start(): void {
           lang: doc.lang,
           owner: doc.owner,
         });
+      })
+      .catch(next);
+  });
+  // Find-by-hash API
+  app.get('/hash/:hash([0-9a-fA-F]{1,})', (req, res, next) => {
+    const { hash } = req.params;
+    getByHash(hash)
+      .then(id => {
+        if (id == null) {
+          res.sendStatus(404);
+          return;
+        }
+
+        res.redirect(303, `/lang/${id}`);
       })
       .catch(next);
   });

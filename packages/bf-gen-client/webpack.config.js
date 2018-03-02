@@ -1,4 +1,5 @@
 const path = require('path');
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -20,6 +21,13 @@ module.exports = {
         use: ['source-map-loader'],
         enforce: 'pre',
       },
+      {
+        test: /\.css$/,
+        use: ExtractTextWebpackPlugin.extract({
+          use: ['css-loader', 'postcss-loader'],
+        }),
+      },
     ],
   },
+  plugins: [new ExtractTextWebpackPlugin('css.css')],
 };

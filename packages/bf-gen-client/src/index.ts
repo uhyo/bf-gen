@@ -2,6 +2,8 @@ import { LanguageDefinition, Limits, Owner } from '@uhyo/bf-gen-defs';
 
 import { initApp } from './app';
 
+import '../css/index.css';
+
 /**
  * Init the language page view.
  */
