@@ -65,7 +65,7 @@ export class Interpreter extends React.PureComponent<
   public render() {
     const { running, waiting, error, output, result } = this.state;
     return (
-      <div>
+      <Wrapper>
         <p>
           サンプル：
           <select onChange={this.handleSampleChange}>
@@ -96,7 +96,7 @@ export class Interpreter extends React.PureComponent<
             </ResultArea>
           </ResultWrapper>
         ) : null}
-      </div>
+      </Wrapper>
     );
   }
   public componentDidUpdate(_: IPropInterpreter, prevState: IStateInterpreter) {
@@ -220,6 +220,13 @@ export class Interpreter extends React.PureComponent<
     });
   }
 }
+
+/**
+ * Interpreter wrapper.
+ */
+const Wrapper = styled.div`
+  margin-bottom: 1em;
+`;
 
 /**
  * Interpreter textarea.

@@ -8,6 +8,7 @@ import { operators, operatorDesc } from '../bf/ops';
 
 import { Interpreter } from './interpreter';
 import { Markdown } from './markdown';
+import { ShareWidgets } from './share';
 
 /**
  * Initialize an app.
@@ -37,6 +38,7 @@ class AppInner extends React.PureComponent<IPropApp, {}> {
       language: { name, name_short, description, ops },
       owner,
     } = this.props;
+    const url = location.href;
     return (
       <div className={className}>
         <section>
@@ -76,6 +78,9 @@ class AppInner extends React.PureComponent<IPropApp, {}> {
               <b>{name_short}</b>をブラウザ上で実行することができます。
             </p>
             <Interpreter language={this.props.language} />
+          </section>
+          <section>
+            <ShareWidgets url={url} />
           </section>
         </section>
       </div>

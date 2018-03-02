@@ -10,6 +10,9 @@ body {
   margin: 0 8px 0 8px;
   display: flex;
   flex-flow: column nowrap;
+
+  font-family: Helvetica Neue, Hiragino Kaku Gothic ProN, 'メイリオ', meiryo,
+    sans-serif;
 }
 h1 {
   font-size: 2em;
