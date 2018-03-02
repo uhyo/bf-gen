@@ -5,6 +5,7 @@ import styled from 'styled-components';
  * Standard button.
  */
 export const Button = styled.button`
+  box-sizing: border-box;
   width: 100%;
   border: 1px solid #aaaaaa;
   border-radius: 6px;
@@ -25,6 +26,7 @@ export const Button = styled.button`
  * Standard input.
  */
 export const Input = styled.input`
+  box-sizing: border-box;
   width: 100%;
   padding: 8px 5px;
   border: 1px solid #aaaaaa;
@@ -41,6 +43,7 @@ export const Input = styled.input`
  * Standard textarea.
  */
 export const TextArea = styled.textarea`
+  box-sizing: border-box;
   width: 100%;
   padding: 8px 5px;
   border: 1px solid #aaaaaa;
