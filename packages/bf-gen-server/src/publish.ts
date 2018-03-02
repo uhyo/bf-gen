@@ -1,7 +1,8 @@
 import jsonschema from 'jsonschema';
 import config from 'config';
 
-import { TwitterUser, languageHash } from './logic';
+import { Owner } from '@uhyo/bf-gen-defs';
+import { languageHash } from './logic';
 import { languageCollection, LanguageDoc } from './db';
 
 /**
@@ -21,10 +22,7 @@ export interface PublishResult {
  * Publish given language.
  * @returns {Promise} Promise that resolves to language id.
  */
-export async function publish(
-  owner: TwitterUser,
-  lang: any,
-): Promise<PublishResult> {
+export async function publish(owner: Owner, lang: any): Promise<PublishResult> {
   // Validate given language.
   if (!validate(lang)) {
     throw new Error('Input value is invalid');

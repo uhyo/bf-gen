@@ -47,7 +47,6 @@ export class Executor {
     let top = 0;
 
     while (top >= 0) {
-      debugger;
       const st = stack[top];
       const current = st.parent.blocks[st.index];
       if (current == null) {

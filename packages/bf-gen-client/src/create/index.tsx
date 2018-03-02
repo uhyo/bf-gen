@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { bind } from 'bind-decorator';
 import styled from 'styled-components';
-import { Limits } from '@uhyo/bf-gen-defs';
+import { Limits, Owner } from '@uhyo/bf-gen-defs';
 
 import { App as Preview } from '../app';
 
@@ -18,9 +18,10 @@ export function initApp(
   target: HTMLElement,
   token: string,
   limits: Limits,
+  owner: Owner,
 ): void {
   const store = new Store(limits);
-  const elm = <App limits={limits} token={token} store={store} />;
+  const elm = <App limits={limits} token={token} store={store} owner={owner} />;
   ReactDOM.render(elm, target);
 }
 
@@ -30,6 +31,7 @@ export interface IPropApp {
    * Token that should be sent back to server.
    */
   token: string;
+  owner: Owner;
   store: Store;
 }
 export interface IStateApp {
@@ -45,6 +47,7 @@ export class App extends React.Component<IPropApp, IStateApp> {
   public render() {
     const {
       limits,
+      owner,
       store: { short_name, long_name, description, ops, language },
     } = this.props;
     const { preview } = this.state;
@@ -122,9 +125,7 @@ export class App extends React.Component<IPropApp, IStateApp> {
             <p>
               <b>プレビュー</b>を確認してページ下部の「公開」ボタンを押してください。
             </p>
-            <h1>{long_name}</h1>
-            <p>{description}</p>
-            <Preview language={language} />
+            <Preview language={language} owner={owner} />
             <p>
               <Button onClick={this.handlePublish}>公開</Button>
             </p>

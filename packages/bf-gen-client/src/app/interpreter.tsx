@@ -2,9 +2,11 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { bind } from 'bind-decorator';
 
-import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
 import { withProps } from '../util/styled';
 import { run } from '../bf';
+
+import { bfSamples } from './samples';
 
 export interface IPropInterpreter {
   language: LanguageDefinition;
@@ -59,6 +61,17 @@ export class Interpreter extends React.PureComponent<
     const { running, waiting, error, output } = this.state;
     return (
       <div>
+        <p>
+          サンプル：
+          <select onChange={this.handleSampleChange}>
+            <option>----</option>
+            {bfSamples.map(({ name }, i) => (
+              <option key={name} value={String(i)}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </p>
         <CodeArea innerRef={e => (this.textarea = e)} />
         <RunButton type="button" onClick={this.handleClick} disabled={running}>
           実行
@@ -81,6 +94,31 @@ export class Interpreter extends React.PureComponent<
     // if input is opened...
     if (!prevState.waiting && this.state.waiting && this.input != null) {
       this.input.focus();
+    }
+  }
+  @bind
+  protected handleSampleChange(
+    e: React.SyntheticEvent<HTMLSelectElement>,
+  ): void {
+    // sample select is changed.
+    if (this.textarea != null) {
+      const { currentTarget: { value } } = e;
+      const { language: { ops } } = this.props;
+      const idx = Number(value);
+      if (!isFinite(idx)) {
+        return;
+      }
+      const code = bfSamples[idx].code;
+      // 今の言語に置換
+      let result = '';
+      for (const op of code) {
+        if (op === '\n') {
+          result += '\n';
+        } else if (op in ops) {
+          result += ops[op as Operator];
+        }
+      }
+      this.textarea.value = result;
     }
   }
   @bind
@@ -205,6 +243,7 @@ const ResultArea = withProps<IPropResultArea>()(styled.pre)`
   margin: 2px 0;
   padding: 8px;
   font-size: 1rem;
+  white-space: pre-wrap;
 `;
 
 /**

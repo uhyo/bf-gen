@@ -7,9 +7,9 @@ import passport from 'passport';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
-import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Owner } from '@uhyo/bf-gen-defs';
 
-import { issueJwt, TwitterUser } from './logic';
+import { issueJwt } from './logic';
 import { publish } from './publish';
 import { loadLanguage } from './get';
 
@@ -22,7 +22,14 @@ passport.use(
       callbackURL: config.get('http.origin') + '/auth/twitter/callback',
     },
     (token, tokenSecret, profile, done) => {
-      done(null, profile);
+      done(null, {
+        id: profile.id,
+        displayName: profile.displayName,
+        profileImage:
+          profile.photos && profile.photos[0]
+            ? profile.photos[0].value
+            : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png',
+      });
     },
   ),
 );
@@ -38,6 +45,7 @@ passport.use(
         type: payload.type,
         id: payload.id,
         displayName: payload.displayName,
+        profileImage: payload.profileImage,
       });
     },
   ),
@@ -47,9 +55,7 @@ passport.serializeUser((user: any, done) => {
   done(null, {
     id: user.id,
     displayName: user.displayName,
-    profileImage: user.photos[0]
-      ? user.photos[0].value
-      : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png',
+    profileImage: user.profileImage,
   });
 });
 passport.deserializeUser((user, done) => {
@@ -102,11 +108,12 @@ export function start(): void {
       res.redirect(303, '/new');
       return;
     }
-    issueJwt(req.user as TwitterUser)
+    issueJwt(req.user as Owner)
       .then(token => {
         res.render('new-step2', {
           token,
           limit: config.get('limit'),
+          owner: req.user,
         });
       })
       .catch(next);
@@ -114,7 +121,7 @@ export function start(): void {
   // API endpoint for publishing
   app.post('/new/publish', passport.authenticate('jwt'), (req, res, next) => {
     const lang = req.body && req.body.lang;
-    const user = req.user as TwitterUser;
+    const user = req.user as Owner;
     if (lang == null || user == null) {
       res.sendStatus(400);
       return;
@@ -141,6 +148,7 @@ export function start(): void {
 
         res.render('lang', {
           lang: doc.lang,
+          owner: doc.owner,
         });
       })
       .catch(next);

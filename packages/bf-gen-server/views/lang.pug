@@ -2,10 +2,7 @@ extends base.pug
 block title
   | #{lang.name}
 block content
-  h1= lang.name
-  p= lang.description
-
   div#app
   script(src="/static/bundle.js")
   script.
-    BF.init(!{JSON.stringify(lang)});
+    BF.init(!{JSON.stringify(lang)},!{JSON.stringify(owner)});

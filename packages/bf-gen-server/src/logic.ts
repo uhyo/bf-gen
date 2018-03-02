@@ -1,23 +1,19 @@
 import jwt from 'jsonwebtoken';
 import objectHash from 'object-hash';
 import config from 'config';
-import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Owner } from '@uhyo/bf-gen-defs';
 
-export interface TwitterUser {
-  id: string;
-  displayName: string;
-  profileImage: string;
-}
 /**
  * Issue a JWT for Twitter user.
  */
-export function issueJwt(user: TwitterUser): Promise<string> {
+export function issueJwt(user: Owner): Promise<string> {
   return new Promise((resolve, reject) => {
     jwt.sign(
       {
         type: 'twitter',
         id: user.id,
         displayName: user.displayName,
+        profileImage: user.profileImage,
       },
       config.get('jwt.secret'),
       {

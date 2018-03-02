@@ -19,6 +19,23 @@ export interface LanguageDefinition {
    */
   ops: Operators;
 }
+/**
+ * Definition of owner.
+ */
+export interface Owner {
+  /**
+   * Twitter ID.
+   */
+  id: string;
+  /**
+   * display name.
+   */
+  displayName: string;
+  /**
+   * Profile image.
+   */
+  profileImage: string;
+}
 
 /**
  * Definition of each operators.
