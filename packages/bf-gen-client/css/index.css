@@ -24,6 +24,10 @@ p {
   margin: 0.8em 0;
   line-height: 1.08;
 }
+hr {
+  border: none;
+  border-top: 1px solid #999999;
+}
 @media (max-width: 400px) {
   h1 {
     font-size: 1.6em;
@@ -68,7 +72,8 @@ footer#footer {
     }
   }
   hr {
-    border: 1px dashed #ffffff;
+    border: none;
+    border-top: 1px dashed #ffffff;
   }
   ul {
     margin: 0;
@@ -79,6 +84,10 @@ footer#footer {
     margin-right: 2.5em;
     list-style-type: none;
   }
+}
+.share-buttons > span {
+  display: inline-block;
+  margin: 3px;
 }
 
 section.warning {

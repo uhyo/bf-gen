@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Share } from 'react-twitter-widgets';
 import styled from 'styled-components';
 
+declare var twttr: any;
 declare var gapi: any;
 
 export interface IPropShareWidgets {
@@ -20,6 +21,10 @@ export class ShareWidgets extends React.PureComponent<
   IPropShareWidgets,
   IStateShareWidgets
 > {
+  /**
+   * Area for Tweet button.
+   */
+  protected twitter: HTMLElement | null = null;
   /**
    * Area for Hatena Bookmark button.
    */
@@ -49,7 +54,7 @@ export class ShareWidgets extends React.PureComponent<
     const { props: { url }, state: { TwitterShare } } = this;
     return (
       <Wrapper>
-        {TwitterShare != null ? <TwitterShare url={url} /> : null}
+        <span ref={e => (this.twitter = e)} />
         <span ref={e => (this.hatena = e)} />
         <span ref={e => (this.google = e)} />
         <span ref={e => (this.pocket = e)} />
@@ -57,7 +62,13 @@ export class ShareWidgets extends React.PureComponent<
     );
   }
   public componentDidMount() {
-    // set up hatena area
+    if (this.twitter != null) {
+      this.twitter.insertAdjacentHTML(
+        'afterbegin',
+        `<a class="twitter-share-button" href="https://twitter.com/intent/tweet">Tweet</a>`,
+      );
+      twttr.widgets.load();
+    }
     if (this.hatena != null) {
       this.hatena.insertAdjacentHTML(
         'afterbegin',

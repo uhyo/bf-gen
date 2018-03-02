@@ -12,10 +12,28 @@ html
       meta(name="twitter:description",content=app.description)
     block metas
     meta(name="viewport",content="width=device-width")
-    link(rel="stylesheet",href="/static/css.css")
     //- for social button
     script(src="https://b.st-hatena.com/js/bookmark_button.js",async)
     script(src="https://apis.google.com/js/platform.js",async.defer)
+    script.
+      window.twttr = (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+          t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+          js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function(f) {
+          t._e.push(f);
+        };
+
+        return t;
+      }(document, "script", "twitter-wjs"));
+    //- CSS
+    link(rel="stylesheet",href="/static/css.css")
   body
     main#main
       block content
