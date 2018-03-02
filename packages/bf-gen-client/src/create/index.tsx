@@ -3,20 +3,33 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { bind } from 'bind-decorator';
 import styled from 'styled-components';
+import { Limits } from '@uhyo/bf-gen-defs';
 
 import { App as Preview } from '../app';
 
 import { operators, operatorDesc } from '../bf/ops';
 
 import { Store } from './store';
+import { publish } from './logic';
 
-export function initApp(target: HTMLElement): void {
-  const store = new Store();
-  const elm = <App store={store} />;
+import { Button, Input, TextArea } from '../parts/form';
+
+export function initApp(
+  target: HTMLElement,
+  token: string,
+  limits: Limits,
+): void {
+  const store = new Store(limits);
+  const elm = <App limits={limits} token={token} store={store} />;
   ReactDOM.render(elm, target);
 }
 
 export interface IPropApp {
+  limits: Limits;
+  /**
+   * Token that should be sent back to server.
+   */
+  token: string;
   store: Store;
 }
 export interface IStateApp {
@@ -31,12 +44,9 @@ export class App extends React.Component<IPropApp, IStateApp> {
   }
   public render() {
     const {
-      short_name,
-      long_name,
-      description,
-      ops,
-      language,
-    } = this.props.store;
+      limits,
+      store: { short_name, long_name, description, ops, language },
+    } = this.props;
     const { preview } = this.state;
     return (
       <>
@@ -44,10 +54,11 @@ export class App extends React.Component<IPropApp, IStateApp> {
           <Area>
             <p>プログラミング言語の名前を入力してください。</p>
             <p>
-              <input
+              <Input
                 autoComplete="off"
                 required
                 value={short_name}
+                maxLength={limits.name}
                 onChange={this.handleShortInput}
               />
             </p>
@@ -55,10 +66,11 @@ export class App extends React.Component<IPropApp, IStateApp> {
           <Area>
             <p>ページのタイトルを入力してください。</p>
             <p>
-              <input
+              <Input
                 autoComplete="off"
                 required
                 value={long_name}
+                maxLength={limits.name}
                 onChange={this.handleLongInput}
               />
             </p>
@@ -66,11 +78,12 @@ export class App extends React.Component<IPropApp, IStateApp> {
           <Area>
             <p>プログラミング言語の説明を入力してください。</p>
             <p>
-              <textarea
+              <TextArea
                 autoComplete="off"
                 required
                 rows={4}
                 value={description}
+                maxLength={limits.description}
                 onChange={this.handleDescInput}
               />
             </p>
@@ -85,10 +98,11 @@ export class App extends React.Component<IPropApp, IStateApp> {
                       <code>{op}</code>
                     </td>
                     <td>
-                      <input
+                      <Input
                         data-op={op}
                         required
                         value={ops[op]}
+                        maxLength={limits.op}
                         onChange={this.handleOpInput}
                       />
                     </td>
@@ -99,18 +113,21 @@ export class App extends React.Component<IPropApp, IStateApp> {
           </Area>
           <Area>
             <p>
-              <SubmitButton type="submit">プレビュー</SubmitButton>
+              <Button type="submit">プレビュー</Button>
             </p>
           </Area>
         </Form>
         {preview ? (
           <div>
             <p>
-              <b>プレビュー</b>:
+              <b>プレビュー</b>を確認してページ下部の「公開」ボタンを押してください。
             </p>
             <h1>{long_name}</h1>
             <p>{description}</p>
             <Preview language={language} />
+            <p>
+              <Button onClick={this.handlePublish}>公開</Button>
+            </p>
           </div>
         ) : null}
       </>
@@ -153,6 +170,12 @@ export class App extends React.Component<IPropApp, IStateApp> {
       preview: true,
     });
   }
+  @bind
+  protected handlePublish(): void {
+    publish(this.props.token, this.props.store.language).catch(err =>
+      alert(err),
+    );
+  }
 }
 
 /**
@@ -165,38 +188,6 @@ const Form = styled.form`
   p {
     margin: 0.3em 0;
   }
-  input,
-  textarea {
-    width: 100%;
-    padding: 8px 5px;
-    border: 1px solid #aaaaaa;
-    border-radius: 4px;
-  }
-  input:invalid, textarea: invalid {
-    background-color: #fff2f2;
-    border: 1px solid #ffaaaa;
-    outline-color: #ffaaaa;
-  }
-`;
-
-/**
- * Submit button.
- */
-const SubmitButton = styled.button`
-  width: 100%;
-  border: 1px solid #aaaaaa;
-  border-radius: 6px;
-  padding: 6px;
-
-  color: #222222;
-  font-size: 1.5em;
-  background: linear-gradient(
-    to bottom,
-    #f2f2f2 0%,
-    #ffffff 15%,
-    #ffffff 80%,
-    #f4f4f4
-  );
 `;
 
 /**

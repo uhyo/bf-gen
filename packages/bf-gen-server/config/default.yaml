@@ -4,10 +4,25 @@ http:
   origin: "http://localhost:8080"
   # cookie secret
   secret: "top secret"
+
+# length limit of user inputs.
+limit:
+  # max length of language name.
+  name: 100
+  # max length of language description.
+  description: 3000
+  # max length of op.
+  op: 50
 # Twitter authentication
 twitter:
   consumerKey: "*"
   consumerSecret: "*"
+
+# JWT server setting
+jwt:
+  secret: "high security"
+  # StringOrURI value
+  issuer: "uhyo/bf-gen"
 
 
 # MongoDB config
@@ -16,4 +31,7 @@ db:
   db: "bf-gen"
   user: "test"
   password: "test"
+  # db host
+  host: "localhost"
+  port: 27017
 

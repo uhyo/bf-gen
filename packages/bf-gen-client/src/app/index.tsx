@@ -55,7 +55,7 @@ export class App extends React.PureComponent<IPropApp, {}> {
           </dl>
         </section>
         <section>
-          <h2>{name_short}を試す</h2>
+          <h2>{name_short} Webインタプリタ</h2>
           <Interpreter language={this.props.language} />
         </section>
       </div>

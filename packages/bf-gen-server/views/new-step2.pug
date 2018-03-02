@@ -7,5 +7,5 @@ block content
   div#app
   script(src="/static/bundle.js")
   script.
-    BF.create();
+    BF.create(!{JSON.stringify(token)},!{JSON.stringify(limit)});
 

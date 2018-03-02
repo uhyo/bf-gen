@@ -1,11 +1,17 @@
 import * as path from 'path';
 import express from 'express';
 import expressSession from 'express-session';
+import bodyParser from 'body-parser';
 import config from 'config';
 import passport from 'passport';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
 import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+
+import { issueJwt, TwitterUser } from './logic';
+import { publish } from './publish';
+import { loadLanguage } from './get';
 
 // Initialize passport.
 passport.use(
@@ -20,10 +26,30 @@ passport.use(
     },
   ),
 );
+passport.use(
+  new JwtStrategy(
+    {
+      secretOrKey: config.get('jwt.secret'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      issuer: config.get('jwt.issuer'),
+    },
+    (payload, done) => {
+      done(null, {
+        type: payload.type,
+        id: payload.id,
+        displayName: payload.displayName,
+      });
+    },
+  ),
+);
+
 passport.serializeUser((user: any, done) => {
   done(null, {
     id: user.id,
     displayName: user.displayName,
+    profileImage: user.photos[0]
+      ? user.photos[0].value
+      : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png',
   });
 });
 passport.deserializeUser((user, done) => {
@@ -52,6 +78,7 @@ export function start(): void {
           path.join(__dirname, '../../bf-gen-client/dist'),
     ),
   );
+  app.use(bodyParser.json());
   // session
   app.use(
     expressSession({
@@ -70,31 +97,53 @@ export function start(): void {
   app.get('/new', (req, res) => {
     res.render('new');
   });
-  app.get('/new/step2', (req, res) => {
-    // XXX auth!
-    res.render('new-step2');
+  app.get('/new/step2', (req, res, next) => {
+    if (req.user == null) {
+      res.redirect(303, '/new');
+      return;
+    }
+    issueJwt(req.user as TwitterUser)
+      .then(token => {
+        res.render('new-step2', {
+          token,
+          limit: config.get('limit'),
+        });
+      })
+      .catch(next);
+  });
+  // API endpoint for publishing
+  app.post('/new/publish', passport.authenticate('jwt'), (req, res, next) => {
+    const lang = req.body && req.body.lang;
+    const user = req.user as TwitterUser;
+    if (lang == null || user == null) {
+      res.sendStatus(400);
+      return;
+    }
+
+    publish(user, lang)
+      .then(obj => {
+        // Successfully published
+        res.json(obj);
+      })
+      .catch(next);
   });
 
-  app.get('/test', (req, res) => {
-    const lang: LanguageDefinition = {
-      name: '最強の難解プログラミング言語「Brainfuck」',
-      name_short: 'Brainfuck',
-      description: 'Urban Müllerが1993年に考案したプログラミング言語です。',
-      ops: {
-        '+': '+',
-        '-': '-',
-        '<': '<',
-        '>': '>',
-        '.': '.',
-        ',': ',',
-        '[': '[',
-        ']': ']',
-      },
-    };
+  // Show language.
+  app.get('/lang/:id([0-9a-fA-F]{1,})', (req, res, next) => {
+    const { id } = req.params;
 
-    res.render('lang', {
-      lang,
-    });
+    loadLanguage(id)
+      .then(doc => {
+        if (doc == null) {
+          res.sendStatus(404);
+          return;
+        }
+
+        res.render('lang', {
+          lang: doc.lang,
+        });
+      })
+      .catch(next);
   });
 
   // Twitter authentication endpoints

@@ -1,4 +1,4 @@
-import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Limits } from '@uhyo/bf-gen-defs';
 
 import { initApp } from './app';
 
@@ -17,7 +17,7 @@ export function init(obj: LanguageDefinition): void {
 /**
  * Initialize the creation page.
  */
-export async function create(): Promise<void> {
+export async function create(token: string, limits: Limits): Promise<void> {
   const apparea = document.getElementById('app');
   if (apparea == null) {
     return;
@@ -25,5 +25,5 @@ export async function create(): Promise<void> {
 
   const { initApp } = await import('./create');
 
-  initApp(apparea);
+  initApp(apparea, token, limits);
 }

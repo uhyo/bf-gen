@@ -1,11 +1,15 @@
 import { action, observable, computed } from 'mobx';
-import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
+import { LanguageDefinition, Operator, Limits } from '@uhyo/bf-gen-defs';
 import { operators } from '../bf/ops';
 
 /**
  * Create a language store.
  */
 export class Store {
+  /**
+   * Provided limits of user input.
+   */
+  protected limits: Limits;
   /**
    * Long name of language.
    */
@@ -37,6 +41,10 @@ export class Store {
     '[': '',
     ']': '',
   };
+  constructor(limits: Limits) {
+    this.limits = limits;
+  }
+
   /**
    * Computed long name.
    */
@@ -46,7 +54,12 @@ export class Store {
       if (!this.short_name) {
         return '';
       } else {
-        return `最強のプログラミング言語「${this.short_name}」`;
+        const v = `最強のプログラミング言語「${this.short_name}」`;
+        if (v.length <= this.limits.name) {
+          return v;
+        } else {
+          return this.short_name;
+        }
       }
     } else {
       return this.long_name_inner;
@@ -61,9 +74,14 @@ export class Store {
       if (!this.short_name) {
         return '';
       } else {
-        return `プログラミング言語「${
+        const v = `プログラミング言語「${
           this.short_name
         }」は僕が考えた最強の言語です。`;
+        if (v.length <= this.limits.description) {
+          return v;
+        } else {
+          return '';
+        }
       }
     } else {
       return this.description_inner;

@@ -1,3 +1,9 @@
 import { start } from './front';
+import { initDB } from './db';
 
-start();
+initDB()
+  .then(() => start())
+  .catch(err => {
+    console.error(err);
+    process.exit(1);
+  });

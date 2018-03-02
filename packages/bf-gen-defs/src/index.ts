@@ -38,3 +38,21 @@ export interface Operators {
  * Type of operators.
  */
 export type Operator = keyof Operators;
+
+/**
+ * Interface of limits definition.
+ */
+export interface Limits {
+  /**
+   * Max length of language name.
+   */
+  name: number;
+  /**
+   * Max length of language description.
+   */
+  description: number;
+  /**
+   * Max length of op.
+   */
+  op: number;
+}
