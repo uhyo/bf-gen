@@ -28,6 +28,10 @@ export interface LanguageDoc {
    * Hash of language definition.
    */
   hash: string;
+  /**
+   * Date when this is created.
+   */
+  created: Date;
 }
 
 /**
@@ -67,6 +71,9 @@ export async function initDB(): Promise<void> {
     {
       key: { hash: 1 },
       unique: true,
+    },
+    {
+      key: { created: 1 },
     },
   ]);
   console.log('Connected to MongoDB');

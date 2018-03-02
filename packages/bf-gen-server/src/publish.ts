@@ -37,6 +37,7 @@ export async function publish(
     owner,
     lang,
     hash,
+    created: new Date(),
   };
 
   // throw into a DB.
