@@ -12,7 +12,7 @@ import { LanguageDefinition, Owner } from '@uhyo/bf-gen-defs';
 
 import { issueJwt } from './logic';
 import { publish } from './publish';
-import { loadLanguage, getByHash } from './get';
+import { loadLanguage, getByHash, getRecent } from './get';
 
 const staticPath: string = config.has('static.path')
   ? config.get('static.path')
@@ -114,9 +114,15 @@ export function start(): void {
 
   app.get('/', (req, res) => {
     res.cacheControl = {
-      maxAge: 3600,
+      maxAge: 180,
     };
-    res.render('new');
+    getRecent()
+      .catch(() => [])
+      .then(recent => {
+        res.render('new', {
+          recent,
+        });
+      });
   });
   app.get('/new/step2', (req, res, next) => {
     if (req.user == null) {

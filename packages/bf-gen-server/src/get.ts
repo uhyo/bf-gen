@@ -31,3 +31,27 @@ export async function getByHash(hash: string): Promise<string | null> {
 
   return doc && doc._id.toHexString();
 }
+
+/**
+ * Get recent languages.
+ */
+export async function getRecent(): Promise<Array<LanguageDoc>> {
+  const coll = await languageCollection();
+
+  const docs = await coll.find(
+    {},
+    {
+      limit: 10,
+      sort: {
+        created: -1,
+      },
+      projection: {
+        _id: 1,
+        'lang.name': 1,
+        'owner.displayName': 1,
+      },
+      maxTimeMs: 300,
+    },
+  );
+  return docs.toArray();
+}

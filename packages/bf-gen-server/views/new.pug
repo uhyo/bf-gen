@@ -20,6 +20,15 @@ block content
   p
     a(href="/hash/e94a2588b197eceeba2f5ada0b99d8430a01eaf3") サンプル
 
+  if recent.length > 0
+    p 最近作成された言語
+    ul.recent
+      - for (const doc of recent)
+        li
+          a(href=`/lang/${doc._id.toHexString()}`)= doc.lang.name
+          = ' by ' + doc.owner.displayName
+
+
   h2 プログラミング言語を作成する
   section.warning
     h3 注意事項

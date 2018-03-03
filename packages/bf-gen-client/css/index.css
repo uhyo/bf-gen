@@ -43,6 +43,20 @@ ul {
     margin: 0.1em 0;
   }
 }
+a:link {
+  color: #0067b1;
+}
+a:visited {
+  color: #934fff;
+}
+ul.recent {
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+}
 main#main {
   flex: auto 1 0;
 }
@@ -67,10 +81,6 @@ footer#footer {
   a {
     color: #ffffff;
     text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
   hr {
     border: none;
