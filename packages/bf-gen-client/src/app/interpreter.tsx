@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { bind } from 'bind-decorator';
 
 import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
-import { test } from '@uhyo/bf-gen-interpreter';
+import { BFInterpreter } from '@uhyo/bf-gen-interpreter';
 import { withProps } from '../util/styled';
-import { run } from '../bf';
 
 import { bfSamples } from './samples';
+import { run } from '../bf';
+import { Tokenizer } from '../bf/tokenizer';
+
+declare var WebAssembly: any;
 
 export interface IPropInterpreter {
   language: LanguageDefinition;
@@ -137,8 +140,6 @@ export class Interpreter extends React.PureComponent<
     if (textarea == null) {
       return;
     }
-    // test
-    test();
     // initialize the state.
     this.setState({
       running: true,
@@ -149,12 +150,18 @@ export class Interpreter extends React.PureComponent<
 
     const code = textarea.value;
 
+    const t = new Tokenizer(this.props.language.ops);
+    const source = [...t.parse(code)].join('');
+
+    // Fallback for safari
+    const exec =
+      'undefined' === typeof WebAssembly ||
+      navigator.userAgent.includes('iPhone OS')
+        ? () => run(this.props.language, this.inputSource, source)
+        : () => new BFInterpreter(source, this.inputSource).run();
+
     try {
-      for await (const char of run(
-        this.props.language,
-        this.inputSource,
-        code,
-      )) {
+      for await (const char of exec()) {
         const str = String.fromCharCode(char);
         this.setState({
           output: this.state.output + str,

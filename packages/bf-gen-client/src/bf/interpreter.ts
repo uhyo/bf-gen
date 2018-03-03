@@ -1,7 +1,6 @@
 import { Operator, Operators } from '@uhyo/bf-gen-defs';
 import { bind } from 'bind-decorator';
 import { Opcode, opcodes } from './ops';
-import { Tokenizer } from './tokenizer';
 import { Executor } from './executor';
 
 export interface RunResult {
@@ -21,10 +20,6 @@ export interface InputSource {
  */
 export class BFInterpreter {
   /**
-   * Tokenizer of current language.
-   */
-  protected tokenizer: Tokenizer;
-  /**
    * Source of input.
    */
   protected inputSource: () => Promise<string>;
@@ -33,7 +28,6 @@ export class BFInterpreter {
    */
   protected inputBuffer: { buf: number[]; index: number } | null = null;
   constructor(ops: Operators, inputSource: () => Promise<string>) {
-    this.tokenizer = new Tokenizer(ops);
     this.inputSource = inputSource;
   }
 
@@ -53,7 +47,7 @@ export class BFInterpreter {
       blocks: [],
     };
 
-    for (const op of this.tokenizer.parse(code)) {
+    for (const op of code) {
       if (op === '[') {
         // Enter a new loop.
         if (current.type === 'ops') {
@@ -95,7 +89,7 @@ export class BFInterpreter {
         c.blocks.push(b);
         current = b;
       }
-      current.ops.push(opcodes[op]);
+      current.ops.push((opcodes as any)[op]);
     }
     if (current.type === 'ops') {
       current = current.parent;

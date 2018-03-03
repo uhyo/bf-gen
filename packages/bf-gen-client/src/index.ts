@@ -4,6 +4,11 @@ import { initApp } from './app';
 
 import '../css/index.css';
 
+// Polyfill for safari
+if (!Symbol.asyncIterator) {
+  (Symbol as any).asyncIterator = Symbol('[Symbol.asyncIterator]');
+}
+
 /**
  * Init the language page view.
  */
