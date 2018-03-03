@@ -5,6 +5,14 @@ html
     title
       block title
         | #{app.name}
+    // Global site tag (gtag.js) - Google Analytics
+    script(async,src="https://www.googletagmanager.com/gtag/js?id=UA-46093038-4")
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-46093038-4');
     block twittercards
       meta(name="twitter:card",content="summary")
       meta(name="twitter:site",content=app.author)
