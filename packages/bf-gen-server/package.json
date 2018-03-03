@@ -18,6 +18,7 @@
     "body-parser": "^1.18.2",
     "config": "^1.30.0",
     "express": "^4.16.2",
+    "express-cache-controller": "^1.1.0",
     "express-session": "^1.15.6",
     "jsonschema": "^1.2.2",
     "jsonwebtoken": "^8.1.1",

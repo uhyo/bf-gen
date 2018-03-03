@@ -6,9 +6,9 @@ block twittercards
   meta(name="twitter:title",content=lang.name)
   meta(name="twitter:description",content=lang.description)
 block metas
-  link(rel="canonical",href= app.origin + "/lang/" + lang.id)
+  link(rel="canonical",href= app.origin + "/lang/" + langid)
 block content
   div#app
-  script(src="/static/bundle.js")
+  script(src=manifest['main.js'])
   script.
     BF.init(!{JSON.stringify(lang)},!{JSON.stringify(owner)});

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { bind } from 'bind-decorator';
 
 import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
-import { BFInterpreter } from '@uhyo/bf-gen-interpreter';
 import { withProps } from '../util/styled';
 
 import { bfSamples } from './samples';
@@ -66,6 +65,7 @@ export class Interpreter extends React.PureComponent<
    * Function to call when user input comes.
    */
   protected inputCallback: ((str: string) => void) | null = null;
+
   public render() {
     const { running, waiting, error, output, result } = this.state;
     return (
@@ -102,6 +102,10 @@ export class Interpreter extends React.PureComponent<
         ) : null}
       </Wrapper>
     );
+  }
+  public componentDidMount() {
+    // prefetch interpreter.
+    import('@uhyo/bf-gen-interpreter');
   }
   public componentDidUpdate(_: IPropInterpreter, prevState: IStateInterpreter) {
     // if input is opened...
@@ -154,6 +158,8 @@ export class Interpreter extends React.PureComponent<
     const source = [...t.parse(code)].join('');
 
     // Fallback for safari
+    const { BFInterpreter } = await import('@uhyo/bf-gen-interpreter');
+
     const exec =
       'undefined' === typeof WebAssembly ||
       navigator.userAgent.includes('iPhone OS')

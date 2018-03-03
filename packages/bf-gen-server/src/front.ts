@@ -1,6 +1,7 @@
 import * as path from 'path';
 import express from 'express';
 import expressSession from 'express-session';
+import expressCacheController from 'express-cache-controller';
 import bodyParser from 'body-parser';
 import config from 'config';
 import passport from 'passport';
@@ -12,6 +13,10 @@ import { LanguageDefinition, Owner } from '@uhyo/bf-gen-defs';
 import { issueJwt } from './logic';
 import { publish } from './publish';
 import { loadLanguage, getByHash } from './get';
+
+const staticPath: string = config.has('static.path')
+  ? config.get('static.path')
+  : path.join(__dirname, '../../bf-gen-client/dist');
 
 // Initialize passport.
 passport.use(
@@ -72,20 +77,27 @@ export function start(): void {
   // Instantiate an express app.
   const app = express();
 
+  // load static assets manifest
+  const manifest = require(path.join(staticPath, 'manifest.json'));
+
   // local data for template engines.
   app.locals.app = config.get('app');
+  app.locals.manifest = manifest;
 
   // app config.
   app.set('view engine', 'pug');
   // static moddleware
   app.use(
     '/static',
-    express.static(
-      config.has('static.path')
-        ? config.get('static.path')
-        : // for development
-          path.join(__dirname, '../../bf-gen-client/dist'),
-    ),
+    express.static(staticPath, {
+      maxAge: '30d',
+    }),
+  );
+  app.use(
+    expressCacheController({
+      public: true,
+      noCache: true,
+    }),
   );
   app.use(bodyParser.json());
   // session
@@ -101,6 +113,9 @@ export function start(): void {
   app.use(passport.session());
 
   app.get('/', (req, res) => {
+    res.cacheControl = {
+      maxAge: 3600,
+    };
     res.render('new');
   });
   app.get('/new/step2', (req, res, next) => {
@@ -108,6 +123,9 @@ export function start(): void {
       res.redirect(303, '/');
       return;
     }
+    res.cacheControl = {
+      private: true,
+    };
     issueJwt(req.user as Owner)
       .then(token => {
         res.render('new-step2', {
@@ -120,6 +138,9 @@ export function start(): void {
   });
   // API endpoint for publishing
   app.post('/new/publish', passport.authenticate('jwt'), (req, res, next) => {
+    res.cacheControl = {
+      private: true,
+    };
     const lang = req.body && req.body.lang;
     const user = req.user as Owner;
     if (lang == null || user == null) {
@@ -146,7 +167,11 @@ export function start(): void {
           return;
         }
 
+        res.cacheControl = {
+          maxAge: 3600,
+        };
         res.render('lang', {
+          langid: id,
           lang: doc.lang,
           owner: doc.owner,
         });

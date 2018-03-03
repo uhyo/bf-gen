@@ -5,7 +5,7 @@ block content
   h1 新しいプログラミング言語を作成
 
   div#app
-  script(src="/static/bundle.js")
+  script(src=manifest['main.js'])
   script.
     BF.create(!{JSON.stringify(token)},!{JSON.stringify(limit)},!{JSON.stringify(owner)});
 

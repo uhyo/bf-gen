@@ -1,5 +1,6 @@
 const path = require('path');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const WebpackManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -11,8 +12,8 @@ module.exports = {
     path: path.join(__dirname, 'dist/'),
     publicPath: '/static/',
     crossOriginLoading: 'anonymous',
-    filename: 'bundle.js',
-    chunkFilename: '[id].[chunkhash].bundle.js',
+    filename: 'bundle.[chunkhash].js',
+    chunkFilename: 'bundle.[id].[chunkhash].js',
   },
   module: {
     rules: [
@@ -29,5 +30,8 @@ module.exports = {
       },
     ],
   },
-  plugins: [new ExtractTextWebpackPlugin('css.css')],
+  plugins: [
+    new ExtractTextWebpackPlugin('css.[chunkhash].css'),
+    new WebpackManifestPlugin(),
+  ],
 };

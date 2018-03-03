@@ -13,6 +13,8 @@ body {
 
   font-family: Helvetica Neue, Hiragino Kaku Gothic ProN, 'メイリオ', meiryo,
     sans-serif;
+
+  line-height: 1.08;
 }
 h1 {
   font-size: 2em;
@@ -22,7 +24,6 @@ h2 {
 }
 p {
   margin: 0.8em 0;
-  line-height: 1.08;
 }
 hr {
   border: none;
