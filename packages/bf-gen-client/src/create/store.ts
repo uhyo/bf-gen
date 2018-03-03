@@ -116,12 +116,16 @@ export class Store {
       this.description_auto = false;
     }
     if (query.ops != null) {
+      const next = {
+        ...this.ops,
+      };
       for (const op of operators) {
         const o = query.ops[op];
         if (o != null) {
-          this.ops[op] = o;
+          next[op] = o;
         }
       }
+      this.ops = next;
     }
   }
 }
