@@ -100,6 +100,27 @@ export class Store {
     };
   }
   /**
+   * Validation of ops.
+   */
+  @computed
+  public get opValidation(): boolean {
+    // 一方が他方のprefixになっていたらだめ
+    for (const left of operators) {
+      for (const right of operators) {
+        if (left === right) {
+          continue;
+        }
+        const leftstr = this.ops[left];
+        const rightstr = this.ops[right];
+        if (leftstr && rightstr && leftstr.indexOf(rightstr) === 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
    * Update action.
    */
   @action

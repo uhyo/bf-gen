@@ -48,7 +48,14 @@ export class App extends React.Component<IPropApp, IStateApp> {
     const {
       limits,
       owner,
-      store: { short_name, long_name, description, ops, language },
+      store: {
+        short_name,
+        long_name,
+        description,
+        ops,
+        language,
+        opValidation,
+      },
     } = this.props;
     const { preview } = this.state;
     return (
@@ -116,12 +123,19 @@ export class App extends React.Component<IPropApp, IStateApp> {
             </OpTable>
           </Area>
           <Area>
+            {opValidation ? null : (
+              <p>
+                命令に曖昧性があります。ある命令が別の命令の先頭部分に含まれてはいけません。
+              </p>
+            )}
             <p>
-              <Button type="submit">プレビュー</Button>
+              <Button type="submit" disabled={!opValidation}>
+                プレビュー
+              </Button>
             </p>
           </Area>
         </Form>
-        {preview ? (
+        {preview && opValidation ? (
           <div>
             <p>
               <b>プレビュー</b>を確認してページ下部の「公開」ボタンを押してください。
