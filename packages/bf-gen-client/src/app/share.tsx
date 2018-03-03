@@ -67,7 +67,9 @@ export class ShareWidgets extends React.PureComponent<
         'afterbegin',
         `<a class="twitter-share-button" href="https://twitter.com/intent/tweet">Tweet</a>`,
       );
-      twttr.widgets.load();
+      if (twttr.widgets != null) {
+        twttr.widgets.load();
+      }
     }
     if (this.hatena != null) {
       this.hatena.insertAdjacentHTML(

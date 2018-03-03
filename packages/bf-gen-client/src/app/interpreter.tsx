@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { bind } from 'bind-decorator';
 
 import { LanguageDefinition, Operator } from '@uhyo/bf-gen-defs';
+import { test } from '@uhyo/bf-gen-interpreter';
 import { withProps } from '../util/styled';
 import { run } from '../bf';
 
@@ -136,6 +137,8 @@ export class Interpreter extends React.PureComponent<
     if (textarea == null) {
       return;
     }
+    // test
+    test();
     // initialize the state.
     this.setState({
       running: true,
