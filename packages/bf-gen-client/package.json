@@ -26,7 +26,7 @@
     "source-map-loader": "^0.2.3",
     "typescript": "^2.8.3",
     "webpack": "^4.7.0",
-    "webpack-cli": "^2.1.2",
+    "webpack-cli": "^3.1.2",
     "webpack-manifest-plugin": "^2.0.2"
   },
   "dependencies": {
