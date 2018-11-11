@@ -1,0 +1,5 @@
+.git
+node_modules
+packages/*/node_modules
+packages/bf-gen-server/config/*.yaml
+!packages/bf-gen-server/config/default.yaml
