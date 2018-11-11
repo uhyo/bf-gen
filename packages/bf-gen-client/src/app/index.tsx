@@ -32,6 +32,7 @@ export interface IPropApp {
  * Class of application.
  */
 class AppInner extends React.PureComponent<IPropApp, {}> {
+  private cliLink = React.createRef<HTMLAnchorElement>();
   public render() {
     const {
       className,
@@ -80,11 +81,38 @@ class AppInner extends React.PureComponent<IPropApp, {}> {
             <Interpreter language={this.props.language} />
           </section>
           <section>
+            <h2>{name_short} コマンドラインインタプリタ</h2>
+            <p>
+              コマンドラインで実行できる<b>{name_short}</b>インタプリタをダウンロードできます。
+            </p>
+            <p>
+              動作環境は<b>node.js v10以降</b>です。
+            </p>
+            <p>
+              <a ref={this.cliLink} href="#" download="interpreter.zip">
+                インタプリタをダウンロード
+              </a>
+            </p>
+          </section>
+          <section>
             <ShareWidgets url={url} />
           </section>
         </section>
       </div>
     );
+  }
+  public async componentDidMount() {
+    const { generateCLI } = await import('./cli');
+    const cli = await generateCLI(this.props.language);
+    const { current } = this.cliLink;
+    if (current != null) {
+      current.href = URL.createObjectURL(cli);
+    }
+  }
+  public componentDidUpdate(prevProps: IPropApp) {
+    if (this.props.language !== prevProps.language) {
+      this.componentDidMount();
+    }
   }
 }
 export const App = styled(AppInner)`

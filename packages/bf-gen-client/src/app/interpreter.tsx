@@ -105,7 +105,7 @@ export class Interpreter extends React.PureComponent<
   }
   public componentDidMount() {
     // prefetch interpreter.
-    import('@uhyo/bf-gen-interpreter');
+    import('bf-wasm');
   }
   public componentDidUpdate(_: IPropInterpreter, prevState: IStateInterpreter) {
     // if input is opened...
@@ -158,7 +158,7 @@ export class Interpreter extends React.PureComponent<
     const source = [...t.parse(code)].join('');
 
     // Fallback for safari
-    const { BFInterpreter } = await import('@uhyo/bf-gen-interpreter');
+    const { BFInterpreter } = await import('bf-wasm');
 
     const exec =
       'undefined' === typeof WebAssembly ||

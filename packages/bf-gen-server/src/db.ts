@@ -2,9 +2,6 @@ import { MongoClient, Collection, ObjectId } from 'mongodb';
 import config from 'config';
 import { LanguageDefinition } from '@uhyo/bf-gen-defs';
 
-// Connection pool
-let client: MongoClient | null = null;
-
 // name of collection.
 const collection = 'languages';
 
@@ -35,13 +32,9 @@ export interface LanguageDoc {
 }
 
 /**
- * Get a new or existing connection to MongoDB.
+ * Get a connection to MongoDB.
  */
 async function getClient(): Promise<MongoClient> {
-  if (client != null) {
-    return client;
-  }
-
   // MongoDB connection URL
   const user = encodeURIComponent(config.get('db.user'));
   const password = encodeURIComponent(config.get('db.password'));
@@ -50,9 +43,8 @@ async function getClient(): Promise<MongoClient> {
   const db = config.get('db.db');
   const url = `mongodb://${user}:${password}@${host}:${port}/${db}?w=1`;
 
-  const cl = await MongoClient.connect(url);
+  const cl = await MongoClient.connect(url, { useNewUrlParser: true });
 
-  client = cl;
   return cl;
 }
 
