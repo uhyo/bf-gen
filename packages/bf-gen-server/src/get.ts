@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { languageCollection, LanguageDoc } from './db';
+import { docToLegacy } from './legacy';
 
 /**
  * Retrieve a language from db.
@@ -10,6 +11,7 @@ export async function loadLanguage(id: string): Promise<LanguageDoc | null> {
   const doc = await coll.findOne({
     _id: ObjectId.createFromHexString(id),
   });
+  doc.lang = docToLegacy(doc.lang);
 
   return doc;
 }
@@ -35,10 +37,17 @@ export async function getByHash(hash: string): Promise<string | null> {
 /**
  * Get recent languages.
  */
-export async function getRecent(): Promise<Array<LanguageDoc>> {
+export async function getRecent(): Promise<
+  Array<{
+    lang: {
+      name: string;
+    };
+    owner: { displayName: string };
+  }>
+> {
   const coll = await languageCollection();
 
-  const docs = await coll.find(
+  const docs = coll.find(
     {},
     {
       limit: 10,
@@ -50,7 +59,7 @@ export async function getRecent(): Promise<Array<LanguageDoc>> {
         'lang.name': 1,
         'owner.displayName': 1,
       },
-      maxTimeMs: 300,
+      maxTimeMS: 300,
     },
   );
   return docs.toArray();

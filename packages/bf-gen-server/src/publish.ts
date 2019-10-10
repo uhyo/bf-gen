@@ -4,6 +4,8 @@ import config from 'config';
 import { Owner } from '@uhyo/bf-gen-defs';
 import { languageHash } from './logic';
 import { languageCollection, LanguageDoc } from './db';
+import { ObjectId } from 'bson';
+import { legacyToDoc } from './legacy';
 
 /**
  * Result of publish.
@@ -33,7 +35,7 @@ export async function publish(owner: Owner, lang: any): Promise<PublishResult> {
   // make a language.
   const doc: LanguageDoc = {
     owner,
-    lang,
+    lang: legacyToDoc(lang),
     hash,
     created: new Date(),
   };
@@ -54,7 +56,7 @@ export async function publish(owner: Owner, lang: any): Promise<PublishResult> {
   // 存在しない
   // もしこの間に入っちゃったらunique indexに止めてもらう
   const res = await coll.insertOne(doc);
-  const id = res.insertedId;
+  const id = res.insertedId as ObjectId;
 
   return {
     exists: false,

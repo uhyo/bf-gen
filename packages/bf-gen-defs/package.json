@@ -1,5 +1,6 @@
 {
   "name": "@uhyo/bf-gen-defs",
+  "private": true,
   "version": "1.0.0",
   "description": "Definitions",
   "main": "dist/index.js",

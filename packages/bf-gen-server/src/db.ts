@@ -1,6 +1,6 @@
-import { MongoClient, Collection, ObjectId } from 'mongodb';
+import { MongoClient, Collection } from 'mongodb';
 import config from 'config';
-import { LanguageDefinition } from '@uhyo/bf-gen-defs';
+import { DBLanguageDefinition } from './legacy';
 
 // name of collection.
 const collection = 'languages';
@@ -20,7 +20,7 @@ export interface LanguageDoc {
   /**
    * language definition.
    */
-  lang: LanguageDefinition;
+  lang: DBLanguageDefinition;
   /**
    * Hash of language definition.
    */
